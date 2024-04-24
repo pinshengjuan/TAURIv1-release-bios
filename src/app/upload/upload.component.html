@@ -1,0 +1,51 @@
+<div class="parent">
+  <div class="dummy-block">
+  </div>
+  <div class="frame-paths">
+    @for (path of paths; track path.action) {
+      <div class="frame-class">
+        <div class="icon-position">
+          <fa-icon [icon]="path.icon"></fa-icon>
+        </div>
+        <label class="label-class">{{ path.action }}</label>
+        <!-- <input type="text" class="path-class" [id]="path.inputId" [ngModel]="path.thePath" (blur)="parsing($event, path.inputId)"/> -->
+        <input type="text" class="path-class" [id]="path.inputId" [(ngModel)]="path.thePath"/>
+        <div class="ellipsis-class">
+          <button
+            class="ellipsis-btn-class"
+            id="id_{{ path.ellipsisId }}"
+            on-click="handleInput(path.inputId)">
+            <fa-icon [icon]="faEllipsisH"></fa-icon>
+          </button>
+        </div>
+      </div>
+      <br />
+    }
+  </div>
+
+  <div class="frame-options">
+    @for (item of allOptions; track item.action) {
+      <div class="frame-class">
+        <div class="icon-position">
+          <fa-icon [icon]="item.icon"></fa-icon>
+        </div>
+        <label class="label-class">{{ item.action }}</label>
+        <div class="checkbox-position">
+          <mat-slide-toggle [(ngModel)]="item.check" (ngModelChange)="checkDependency()"></mat-slide-toggle>
+        </div>
+      </div>
+      <br />
+    }
+  </div>
+  
+  <button type="submit" class="release-btn-class" on-click="summit()">
+    @if (uploadIcon) {
+      <fa-icon [icon]="faUpload"></fa-icon>
+    }
+    @else {
+      <mat-spinner mode="indeterminate" diameter="20" color="accent"></mat-spinner>
+    }
+    <div class="space-class"></div>
+    {{ status }}
+  </button>
+</div>

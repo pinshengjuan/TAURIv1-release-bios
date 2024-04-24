@@ -1,0 +1,35 @@
+<div class="dummy-block">
+</div>
+
+<div class="frame-paths">
+    <div class="frame-class">
+      <div class="icon-position">
+      </div>
+      <label class="label-class">Default Path</label>
+      <input type="text" class="path-class" [(ngModel)]="pathFieldVal"/>
+      <div class="ellipsis-class">
+        <button
+          class="ellipsis-btn-class"
+          on-click="pathField()">
+          <fa-icon [icon]="faEllipsisH"></fa-icon>
+        </button>
+      </div>
+    </div>
+    <br />
+</div>
+
+<div class="frame-paths">
+  @for (mail of mails; track mail.label) {
+    <div class="frame-class">
+      <div class="icon-position">
+      </div>
+      <label class="label-class"> {{mail.label}} </label>
+      <input type="text" class="mail-inputbox-class" [(ngModel)]="mail.address"/>
+    </div>
+    <br />
+  }
+</div>
+
+<button type="submit" class="release-btn-class" on-click="save()">
+  Save
+</button>

@@ -1,0 +1,122 @@
+.parent {
+  
+}
+
+.parent::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+
+.dummy-block {
+  height: 2px;
+  margin-top: 2%;
+}
+
+/* Add application styles & imports to this file! */
+.label-class {
+  font-family: Calibri, Cambria, Cochin, Georgia, Times, "Times New Roman",
+  serif;
+  color: rgba(228, 225, 225, 0.959);
+}
+
+.path-class {
+  display: block;
+  white-space: pre-line;
+  align-items: top;
+  position: absolute;
+  width: 480px;
+  overflow-wrap: break-word;
+  color: white;
+  background-color: rgba(43, 43, 43, 0);
+  text-align: justify;
+  margin-left: 18%;
+  font-family: Consolas;
+  font-size: 15px;
+  box-shadow: none;
+}
+
+.frame-class {
+/* width: 720px; */
+  width: 100%;
+  height: 55px;
+  background-color: rgb(70, 70, 70);
+  border-radius: 5px;
+  display: flex;
+  align-items: center
+}
+
+.icon-position {
+  width: 5%;
+  margin-left: 1%;
+  font-size: 20px;
+}
+
+.ellipsis-class {
+  position: absolute;
+  right: 25px;
+  width: 50px;
+  padding: 10px;
+}
+
+.ellipsis-btn-class {
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 30px;
+  color: rgba(228, 225, 225, 0.959);
+  background-color: rgba(43, 43, 43, 0);
+  outline: none;
+  box-shadow: none;
+}
+
+.ellipsis-btn-class:active {
+  color: rgba(168, 167, 167, 0.959);
+}
+
+.space-class {
+  width: 6px;
+}
+
+.release-btn-class {
+  font-family: Calibri, Cambria, Cochin, Georgia, Times, "Times New Roman",
+  serif;
+  font-size: medium;
+  color: rgba(228, 225, 225, 0.959);
+  background-color: rgba(43, 43, 43, 0);
+  width: 720px;
+  height: 55px;
+  background-color: #2196F3;
+  border-radius: 5px;
+/* display: inline-block; */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  border: none;
+  white-space: nowrap;
+  margin: 0 0 5px 0.5%;
+}
+
+.release-btn-class:active {
+  background-color: #186db3;
+}
+
+/*
+@media (prefers-color-scheme: dark) {
+  body {
+      background: #333;
+      color: white;
+  }
+}
+*/
+.checkbox-position {
+  position: absolute;
+  right: 5px;
+  width: 50px;
+  margin-right: 5px;
+}
+
+::ng-deep .mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {
+  background-color: #2196F3;
+}
