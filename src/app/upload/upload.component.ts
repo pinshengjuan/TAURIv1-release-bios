@@ -103,6 +103,9 @@ export class UploadComponent {
       await this.checkBiosFile(txtFile, 'historyId');
     } else {
       var serverPath = environment.serverPath;
+      if (this.paths[1].thePath) {
+        serverPath = this.paths[1].thePath
+      }
 
       const server = await open({
         directory: true,
