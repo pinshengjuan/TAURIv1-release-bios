@@ -173,17 +173,13 @@ pub mod strr {
             format!("{}\\server.txt", parent_dir)
         }
         pub fn read_path(&self) -> String {
-            let reg = Regex::new(r"(?m)^Server: ").unwrap();
-            for content in read_to_string(self.server_folder()).unwrap().lines() {
-                if let Some(line) = content.lines().find(|line| reg.is_match(line)) {
-                    let new_line = line.replace("Server:", "");
-                    let new_line = new_line.trim();
-                    let last = new_line.chars().last();
-                    return match last {
-                        Some('\\') => new_line.to_string(),
-                        Some(_) => format!("{}\\", new_line),
-                        None => "".to_string(),
-                    }
+            for line in read_to_string(self.server_folder()).unwrap().lines() {
+                let new_line = line.trim();
+                let last = new_line.chars().last();
+                return match last {
+                    Some('\\') => new_line.to_string(),
+                    Some(_) => format!("{}\\", new_line),
+                    None => "".to_string(),
                 }
             }
             "".to_string()
