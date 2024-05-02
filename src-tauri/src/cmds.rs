@@ -48,6 +48,14 @@ pub fn is_bios_file_exists(txt: &str) -> Result<String, String> {
 }
 
 #[tauri::command]
+pub fn is_server_folder_given(txt: &str) -> Result<String, String> {
+    let strr = Strr::new(Some(txt.to_string()), None );
+    let folder_name = strr.read_path();
+
+    Ok(folder_name.into())
+}
+
+#[tauri::command]
 pub fn copy_bios_file_to_server(txt: &str, server: &str) -> Result<String, String> {
     let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
     let bios_file_name = strr.image_name_without_folder();

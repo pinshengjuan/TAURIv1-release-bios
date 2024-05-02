@@ -16,6 +16,7 @@ pub mod strr {
 //              |   |___aaaBBBproj_1.01.HW01.ROM
 //              |___History.txt
 //              |___email.txt
+//              |___server.txt
 
 // (server)
 //  //my-binary-server/BIOS/ROM/ChipsetVendors/SomeVendor/aaaBBBproj
@@ -165,6 +166,27 @@ pub mod strr {
             let parent_dir: String = self.project_path();
 
             format!("{}\\email.txt", parent_dir)
+        }
+        pub fn server_folder(&self) -> String { //D:\MyProjects\aaaBBBproj\101\server.txt
+            let parent_dir: String = self.project_path();
+
+            format!("{}\\server.txt", parent_dir)
+        }
+        pub fn read_path(&self) -> String {
+            let reg = Regex::new(r"(?m)^Server: ").unwrap();
+            for content in read_to_string(self.server_folder()).unwrap().lines() {
+                if let Some(line) = content.lines().find(|line| reg.is_match(line)) {
+                    let new_line = line.replace("Server:", "");
+                    let new_line = new_line.trim();
+                    let last = new_line.chars().last();
+                    return match last {
+                        Some('\\') => new_line.to_string(),
+                        Some(_) => format!("{}\\", new_line),
+                        None => "".to_string(),
+                    }
+                }
+            }
+            "".to_string()
         }
         pub fn get_email_to_list(&self) -> String {
             let to = Regex::new(r"(?m)^To: ").unwrap();

@@ -101,6 +101,7 @@ export class UploadComponent {
         this.paths[0].thePath = txtFile;
       }
       await this.checkBiosFile(txtFile, 'historyId');
+      await this.givenServerFolder(txtFile);
     } else {
       var serverPath = environment.serverPath;
       if (this.paths[1].thePath) {
@@ -131,6 +132,15 @@ export class UploadComponent {
     }
     this.uploadIcon = true;
     this.status = 'Release'
+  }
+
+  async givenServerFolder(txtFile: any) {
+    let txt: string = txtFile;
+    if (txt!==null) {
+      invoke<string>('is_server_folder_given', { txt }).then( async (text) => {
+        this.paths[1].thePath = text;
+      });
+    }
   }
 
   checkDependency() {
