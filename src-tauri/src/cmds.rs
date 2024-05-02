@@ -50,9 +50,16 @@ pub fn is_bios_file_exists(txt: &str) -> Result<String, String> {
 #[tauri::command]
 pub fn is_server_folder_given(txt: &str) -> Result<String, String> {
     let strr = Strr::new(Some(txt.to_string()), None );
-    let folder_name = strr.read_path();
 
-    Ok(folder_name.into())
+    let server_path = PathBuf::from(strr.server_folder());
+    let is_file = server_path.is_file();
+
+    if is_file == true {
+        let folder_name = strr.read_path();
+        Ok(folder_name.into())
+    } else {
+        Ok("".into())
+    }
 }
 
 #[tauri::command]
