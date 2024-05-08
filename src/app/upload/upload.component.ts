@@ -76,6 +76,7 @@ export class UploadComponent {
       this.zone.run(() => { //use this to prevent
         this.paths[0].thePath = input;
         this.checkBiosFile(input, 'historyId');
+        this.givenServerFolder(input);
       });
     }
   });
