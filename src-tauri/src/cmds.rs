@@ -102,8 +102,8 @@ pub fn copy_history_file_to_server(txt: &str, server: &str) -> Result<String, St
 pub fn copy_bios_file_to_production(txt: &str, server: &str, content: &str) -> Result<String, String> {
     let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()) );
     let bios_file_name = strr.image_name_without_folder();
-    let destination = format!("{}{}", strr.production_path_with_version(), bios_file_name);
-    let bios_file_path = strr.image_full_path();
+    let destination = format!("{}{}", strr.production_path_with_version(), &bios_file_name);
+    let bios_file_path =  format!("{}{}", server, bios_file_name);
     match copy(bios_file_path, destination) {
         Ok(_) => Ok("File copied successfully".to_string()),
         Err(e) => Err(e.to_string()),
