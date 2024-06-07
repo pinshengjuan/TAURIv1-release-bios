@@ -101,14 +101,13 @@ pub mod strr {
         }
         fn get_version(&self, item: &str) -> String {
             let re = Regex::new(item).unwrap();
-            let colon = Regex::new(r":[a-zA-Z\d\s\.\-\_\\\/]+$").unwrap();
-            let content = self.get_latest_content();
-        
-            if let Some(line) = content.lines().find(|line| re.is_match(line)) {
-                if let Some(captures) = colon.captures(line) {
-                    if let Some(second_part) = captures.get(0) {
-                        let result = second_part.as_str().replace(":", "").trim().to_string();
-                        return result;
+
+            for line in self.content.as_str().lines() {
+                let parts: Vec<&str> = line.split(':').collect();
+                if parts.len() == 2 {
+                    if re.is_match(parts[0].trim()) {
+                        let value = parts[1].trim().to_string();
+                        return value;
                     }
                 }
             }
