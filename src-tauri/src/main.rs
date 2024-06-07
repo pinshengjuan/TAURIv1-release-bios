@@ -12,6 +12,7 @@ mod str_libs;
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
+            cmds::get_content, 
             cmds::is_bios_file_exists, 
             cmds::is_server_folder_given, 
             cmds::copy_bios_file_to_server,

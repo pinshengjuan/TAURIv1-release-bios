@@ -29,18 +29,20 @@ pub mod strr {
 
     pub struct Strr {
         file: String,
-        folder: String
+        folder: String,
+        content: String
     }
 
     impl Strr {
 
-        pub fn new(file: Option<String>, folder: Option<String>) -> Self {
+        pub fn new(file: Option<String>, folder: Option<String>, content: Option<String>) -> Self {
             let file = file.unwrap_or_else(|| "".to_string());
             let folder = folder.unwrap_or_else(|| "".to_string());
-            Strr { file, folder }
+            let content = content.unwrap_or_else(|| "".to_string());
+            Strr { file, folder, content }
         }
 
-        pub fn get_latest_content(&self) -> String {
+        pub fn parse_content(&self) -> String {
             let mut result: String = "".to_string();
             let mut flag: u8 = 0;
             let cr_lf = "\n";

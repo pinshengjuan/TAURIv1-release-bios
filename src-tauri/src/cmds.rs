@@ -30,8 +30,21 @@ use zip::{
 };
 
 #[tauri::command]
-pub fn is_bios_file_exists(txt: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), None );
+pub fn get_content(txt: &str) -> Result<String, String> {
+    let strr = Strr::new(Some(txt.to_string()), None, None );
+
+    let content = strr.parse_content();
+
+    if content == "".to_string() {
+        Ok("".into())
+    } else {
+        Ok(content.into())
+    }
+}
+
+#[tauri::command]
+pub fn is_bios_file_exists(txt: &str, content: &str) -> Result<String, String> {
+    let strr = Strr::new(Some(txt.to_string()), None, Some(content.to_string()) );
     let string = strr.image_name_with_folder();
     if string == "".to_string() {
         Err("BIOS filename in history.txt is incorrect".into())
@@ -49,7 +62,7 @@ pub fn is_bios_file_exists(txt: &str) -> Result<String, String> {
 
 #[tauri::command]
 pub fn is_server_folder_given(txt: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), None );
+    let strr = Strr::new(Some(txt.to_string()), None, None );
 
     let server_path = PathBuf::from(strr.server_folder());
     let is_file = server_path.is_file();
@@ -63,8 +76,8 @@ pub fn is_server_folder_given(txt: &str) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn copy_bios_file_to_server(txt: &str, server: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
+pub fn copy_bios_file_to_server(txt: &str, server: &str, content: &str) -> Result<String, String> {
+    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()) );
     let bios_file_name = strr.image_name_without_folder();
     let destination = format!("{}{}", server, bios_file_name);
     let bios_file_path = strr.image_full_path();
@@ -76,7 +89,7 @@ pub fn copy_bios_file_to_server(txt: &str, server: &str) -> Result<String, Strin
 
 #[tauri::command]
 pub fn copy_history_file_to_server(txt: &str, server: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
+    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), None );
     let destination = format!("{}{}", server, strr.hisotry_file_name());
     match copy(txt.to_string(), destination) {
         Ok(_) => Ok("File copied successfully".to_string()),
@@ -86,8 +99,8 @@ pub fn copy_history_file_to_server(txt: &str, server: &str) -> Result<String, St
 }
 
 #[tauri::command]
-pub fn copy_bios_file_to_production(txt: &str, server: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
+pub fn copy_bios_file_to_production(txt: &str, server: &str, content: &str) -> Result<String, String> {
+    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()) );
     let bios_file_name = strr.image_name_without_folder();
     let destination = format!("{}{}", strr.production_path_with_version(), bios_file_name);
     let bios_file_path = strr.image_full_path();
@@ -121,20 +134,20 @@ pub fn check_folder_or_create(folder: String) -> Result<String, String> {
 
 #[tauri::command]
 pub fn is_production_folder_exists(server: &str) -> Result<String, String> {
-    let strr = Strr::new(None, Some(server.to_string()) );
+    let strr = Strr::new(None, Some(server.to_string()), None );
     let production_folder = strr.production_path();
     check_folder_or_create(production_folder)
 }
 
 #[tauri::command]
-pub fn is_version_folder_exists(txt: &str, server: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
+pub fn is_version_folder_exists(txt: &str, server: &str, content: &str) -> Result<String, String> {
+    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()) );
     let version_folder = strr.production_path_with_version();
     check_folder_or_create(version_folder)
 }
 
 pub fn calc_rom_checksum(txt: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), None );
+    let strr = Strr::new(Some(txt.to_string()), None, None );
 
     match fs::File::open(strr.image_full_path()) {
         Ok(mut f) => {
@@ -151,8 +164,8 @@ pub fn calc_rom_checksum(txt: &str) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn make_checksum_file(txt: &str, server: &str) -> Result<(), String> {
-    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
+pub fn make_checksum_file(txt: &str, server: &str, content: &str) -> Result<(), String> {
+    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()) );
     let checksum = match calc_rom_checksum(txt) {
         Ok(checksum) => checksum,
         Err(e) => return Err(e),
@@ -180,8 +193,8 @@ pub fn make_checksum_file(txt: &str, server: &str) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn pack_rom(txt: &str, server: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
+pub fn pack_rom(txt: &str, server: &str, content: &str) -> Result<String, String> {
+    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()) );
     let location = format!("{}{}", strr.production_path_with_version(), strr.pack_name());
     let path = Path::new(&location);
     let file = match File::create(&path) {
@@ -223,8 +236,8 @@ pub fn pack_rom(txt: &str, server: &str) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn set_clipboard(txt: &str, server: &str, production: bool) {
-    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
+pub fn set_clipboard(txt: &str, server: &str, content: &str, production: bool) {
+    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()) );
     let content: String;
     if production == true {
         content = strr.mail_body_production();
@@ -236,8 +249,8 @@ pub fn set_clipboard(txt: &str, server: &str, production: bool) {
 }
 
 #[tauri::command]
-pub fn open_outlook(txt: &str, server: &str, production: bool, supervisor_mail: &str) {
-    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()) );
+pub fn open_outlook(txt: &str, server: &str, content: &str, production: bool, supervisor_mail: &str) {
+    let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()));
     let get_address = GetAddress::new(Some(supervisor_mail.to_string()));
     let mut to: String = "".to_string();
     let mut cc: String = "".to_string();

@@ -73,9 +73,10 @@ export class UploadComponent {
     const input = ((event.payload as string)[0] as string).replace("/", "\\");
     const historyPattern = new RegExp(/History[a-zA-Z\d\s\.\-\_]+txt/);
     if (input.slice(input.lastIndexOf("\\")).match(historyPattern)) {
-      this.zone.run(() => { //use this to prevent
+      this.zone.run(async () => { //use this to prevent
         this.paths[0].thePath = input;
-        this.checkBiosFile(input, 'historyId');
+        let content = await this.getHistoryContent(input);
+        this.checkBiosFile(input, 'historyId', content);
         this.givenServerFolder(input);
       });
     }
@@ -101,7 +102,8 @@ export class UploadComponent {
       if (txtFile) {
         this.paths[0].thePath = txtFile;
       }
-      await this.checkBiosFile(txtFile, 'historyId');
+      let content = await this.getHistoryContent(txtFile);
+      await this.checkBiosFile(txtFile, 'historyId', content);
       await this.givenServerFolder(txtFile);
     } else {
       var serverPath = environment.serverPath;
@@ -120,13 +122,13 @@ export class UploadComponent {
     }
   }
 
-  async checkBiosFile(txtFile: any, inputId: string) {
+  async checkBiosFile(txtFile: any, inputId: string, content: string) {
     if (inputId === 'historyId') {
       this.uploadIcon = false;
       this.status = 'Checking BIOS ROM file...'
       let txt: string = txtFile;
       if (txt!==null) {
-        invoke<string>('is_bios_file_exists', { txt }).catch( async (error) => {
+        invoke<string>('is_bios_file_exists', { txt, content }).catch( async (error) => {
           await message(error, { title: ' '});
         });
       }
@@ -150,6 +152,12 @@ export class UploadComponent {
     }
   }
 
+  async getHistoryContent(txtFile: any) {
+    let txt: string = txtFile;
+    let content = await invoke<string>('get_content', { txt });
+    return content;
+  }
+
   async summit() {
     if (this.paths[0].thePath && this.paths[1].thePath) {
       let txt: string = this.paths[0].thePath;
@@ -157,43 +165,47 @@ export class UploadComponent {
       let supervisorMail = this.supervisorMail;
 
       this.uploadIcon = false;
+
+      this.status = 'Get latest history content...';
+      let content = await this.getHistoryContent(txt);
+
       this.status = 'Checking BIOS ROM exists...';
-      await this.checkBiosFile(this.paths[0].thePath, 'historyId');
+      await this.checkBiosFile(this.paths[0].thePath, 'historyId', content);
 
       this.status = 'Copying History.txt to server...';
       await invoke<string>('copy_history_file_to_server', { txt, server });
 
       this.status = 'Copying BIOS ROM to server...';
-      await invoke<string>('copy_bios_file_to_server', { txt, server });
+      await invoke<string>('copy_bios_file_to_server', { txt, server, content });
 
       if (this.allOptions[0].check) { //production
         this.status = 'Check Production folder exists...';
         await invoke<string>('is_production_folder_exists', { server });
  
-        await invoke<string>('is_version_folder_exists', { txt, server });
+        await invoke<string>('is_version_folder_exists', { txt, server, content });
         
         this.status = 'Copying BIOS ROM to Production folder...';
-        await invoke<string>('copy_bios_file_to_production', { txt, server });
+        await invoke<string>('copy_bios_file_to_production', { txt, server, content });
         
         this.status = 'Creating checksum file...';
-        await invoke<string>('make_checksum_file', { txt, server });
+        await invoke<string>('make_checksum_file', { txt, server, content });
         
         this.status = 'Packing ROM in Production folder...';
-        await invoke<string>('pack_rom', { txt, server });
+        await invoke<string>('pack_rom', { txt, server, content });
       }
 
       if (this.allOptions[1].check) { //outlook
         this.status = 'Open Outlook...';
         let production: boolean = this.allOptions[0].check;
 
-        await invoke<string>('open_outlook', { txt, server, production, supervisorMail});
+        await invoke<string>('open_outlook', { txt, server, content, production, supervisorMail});
       }
 
       if (this.allOptions[2].check) { //clipboard
         this.status = 'Copying email content to clipboard...';
         let production: boolean = this.allOptions[0].check;
 
-        await invoke<string>('set_clipboard', { txt, server, production});
+        await invoke<string>('set_clipboard', { txt, server, content, production});
       }
     }
 
