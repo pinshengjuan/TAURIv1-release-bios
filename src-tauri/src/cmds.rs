@@ -146,9 +146,7 @@ pub fn is_version_folder_exists(txt: &str, server: &str, content: &str) -> Resul
     check_folder_or_create(version_folder)
 }
 
-pub fn calc_rom_checksum(txt: &str) -> Result<String, String> {
-    let strr = Strr::new(Some(txt.to_string()), None, None );
-
+pub fn calc_rom_checksum(strr: &Strr) -> Result<String, String> {
     match fs::File::open(strr.image_full_path()) {
         Ok(mut f) => {
             let mut buffer = Vec::new();
@@ -166,7 +164,7 @@ pub fn calc_rom_checksum(txt: &str) -> Result<String, String> {
 #[tauri::command]
 pub fn make_checksum_file(txt: &str, server: &str, content: &str) -> Result<(), String> {
     let strr = Strr::new(Some(txt.to_string()), Some(server.to_string()), Some(content.to_string()) );
-    let checksum = match calc_rom_checksum(txt) {
+    let checksum = match calc_rom_checksum(&strr) {
         Ok(checksum) => checksum,
         Err(e) => return Err(e),
     };
