@@ -162,6 +162,9 @@ export class UploadComponent {
     if (this.paths[0].thePath && this.paths[1].thePath) {
       let txt: string = this.paths[0].thePath;
       let server: string = this.paths[1].thePath;
+      if (server.slice(-1) !== '\\') {
+        server += "\\"
+      }
       let supervisorMail = this.supervisorMail;
 
       this.uploadIcon = false;
